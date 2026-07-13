@@ -21,7 +21,7 @@ public class DBConnection {
     private static final String PASSWORD =
             System.getenv("DB_PASSWORD") != null
                     ? System.getenv("DB_PASSWORD")
-                    : "password"; // Replace with your local MySQL password
+                    : "Srushtibharath1123"; // Replace with your local MySQL password
 
     public static Connection getConnection() {
         Connection connection = null;
