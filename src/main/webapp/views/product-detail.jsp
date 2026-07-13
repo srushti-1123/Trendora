@@ -44,36 +44,35 @@
         .save-amount { font-size: 13px; color: #4CAF50; font-weight: 700; background: #E8F5E9; padding: 5px 12px; border-radius: 15px; }
         .product-description { font-size: 14px; color: #666; line-height: 1.8; margin-bottom: 28px; padding: 18px; background: #f8f8ff; border-radius: 14px; border-left: 4px solid #667eea; }
 
-        /* SIZE SELECTION - KEY FIX */
+        /* SIZE SECTION */
         .size-section { margin-bottom: 28px; }
         .size-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
         .size-title { font-size: 15px; font-weight: 800; color: #1a1a2e; }
-        .size-guide { font-size: 12px; color: #667eea; cursor: pointer; font-weight: 600; }
+        .size-guide-btn { font-size: 12px; color: #667eea; cursor: pointer; font-weight: 600; background: none; border: none; display: flex; align-items: center; gap: 5px; transition: color 0.3s; }
+        .size-guide-btn:hover { color: #f953c6; }
         .size-options { display: flex; flex-wrap: wrap; gap: 10px; }
-        .size-btn {
-            padding: 10px 20px;
-            border: 2px solid #e8e8ff;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            background: #fff;
-            color: #555;
-            transition: all 0.3s;
-            user-select: none;
-        }
-        .size-btn:hover {
-            border-color: #667eea;
-            color: #667eea;
-            background: #f0f0ff;
-        }
-        .size-btn.selected {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102,126,234,0.4);
-        }
+        .size-btn { padding: 10px 20px; border: 2px solid #e8e8ff; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; background: #fff; color: #555; transition: all 0.3s; user-select: none; }
+        .size-btn:hover { border-color: #667eea; color: #667eea; background: #f0f0ff; }
+        .size-btn.selected { border-color: #667eea; background: linear-gradient(135deg, #667eea, #764ba2); color: white; box-shadow: 0 4px 15px rgba(102,126,234,0.4); }
         .size-error { color: #f953c6; font-size: 13px; font-weight: 600; margin-top: 8px; display: none; }
+        .no-sizes-msg { font-size: 14px; color: #888; padding: 10px; background: #f8f8ff; border-radius: 10px; border: 1px dashed #ddd; }
+
+        /* SIZE GUIDE MODAL */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: #fff; border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative; }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #f0f0ff; }
+        .modal-header h3 { font-size: 20px; font-weight: 800; color: #1a1a2e; }
+        .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #888; transition: color 0.3s; }
+        .modal-close:hover { color: #f953c6; }
+        .size-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .size-table th { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 12px; text-align: center; font-size: 13px; font-weight: 700; }
+        .size-table td { padding: 10px 12px; text-align: center; font-size: 13px; border-bottom: 1px solid #f0f0ff; color: #555; }
+        .size-table tr:nth-child(even) { background: #f8f8ff; }
+        .size-table tr:hover { background: #f0f0ff; }
+        .size-guide-title { font-size: 15px; font-weight: 800; color: #1a1a2e; margin-bottom: 12px; margin-top: 20px; }
+        .size-tip { background: linear-gradient(135deg, #f0f0ff, #fff0ff); border-radius: 12px; padding: 15px; margin-top: 15px; font-size: 13px; color: #555; line-height: 1.7; }
+        .size-tip strong { color: #667eea; }
 
         .quantity-section { margin-bottom: 28px; }
         .quantity-title { font-size: 15px; font-weight: 800; color: #1a1a2e; margin-bottom: 12px; }
@@ -114,6 +113,165 @@
     </style>
 </head>
 <body>
+
+    <!-- SIZE GUIDE MODAL -->
+    <div class="modal-overlay" id="sizeGuideModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-ruler"></i> Size Guide</h3>
+                <button class="modal-close" onclick="closeSizeGuide()">✕</button>
+            </div>
+
+            <%
+                // We will show different size guide based on category
+                String categoryName = "";
+                Object catObj = request.getAttribute("category");
+                if(catObj != null) {
+                    categoryName = ((com.trendora.model.Category)catObj).getCategoryName();
+                }
+            %>
+
+            <% if(categoryName.equalsIgnoreCase("Footwear")) { %>
+                <!-- FOOTWEAR SIZE GUIDE -->
+                <div class="size-guide-title">👟 Footwear Size Guide</div>
+                <table class="size-table">
+                    <tr>
+                        <th>UK Size</th>
+                        <th>EU Size</th>
+                        <th>US Size</th>
+                        <th>Foot Length (cm)</th>
+                    </tr>
+                    <tr><td>4</td><td>37</td><td>5</td><td>23.0</td></tr>
+                    <tr><td>5</td><td>38</td><td>6</td><td>23.8</td></tr>
+                    <tr><td>6</td><td>39</td><td>7</td><td>24.5</td></tr>
+                    <tr><td>7</td><td>40</td><td>8</td><td>25.2</td></tr>
+                    <tr><td>8</td><td>41</td><td>9</td><td>26.0</td></tr>
+                    <tr><td>9</td><td>42</td><td>10</td><td>26.7</td></tr>
+                    <tr><td>10</td><td>43</td><td>11</td><td>27.5</td></tr>
+                    <tr><td>11</td><td>44</td><td>12</td><td>28.2</td></tr>
+                </table>
+                <div class="size-tip">
+                    <strong>How to measure your foot size:</strong><br/>
+                    1. Place your foot on a piece of paper<br/>
+                    2. Mark the longest point of your heel and toe<br/>
+                    3. Measure the distance in cm<br/>
+                    4. Use the chart above to find your size<br/><br/>
+                    <strong>Tip:</strong> If you are between sizes, we recommend going up to the next size for comfort.
+                </div>
+
+            <% } else if(categoryName.equalsIgnoreCase("Men")) { %>
+                <!-- MEN SIZE GUIDE -->
+                <div class="size-guide-title">👔 Men's Clothing Size Guide</div>
+                <table class="size-table">
+                    <tr>
+                        <th>Size</th>
+                        <th>Chest (inches)</th>
+                        <th>Waist (inches)</th>
+                        <th>Hip (inches)</th>
+                    </tr>
+                    <tr><td>S</td><td>36-38</td><td>30-32</td><td>36-38</td></tr>
+                    <tr><td>M</td><td>38-40</td><td>32-34</td><td>38-40</td></tr>
+                    <tr><td>L</td><td>40-42</td><td>34-36</td><td>40-42</td></tr>
+                    <tr><td>XL</td><td>42-44</td><td>36-38</td><td>42-44</td></tr>
+                    <tr><td>XXL</td><td>44-46</td><td>38-40</td><td>44-46</td></tr>
+                </table>
+                <div class="size-guide-title" style="margin-top:15px">👖 Men's Jeans Size Guide</div>
+                <table class="size-table">
+                    <tr>
+                        <th>Waist Size</th>
+                        <th>Waist (inches)</th>
+                        <th>Hip (inches)</th>
+                    </tr>
+                    <tr><td>28</td><td>28</td><td>36</td></tr>
+                    <tr><td>30</td><td>30</td><td>38</td></tr>
+                    <tr><td>32</td><td>32</td><td>40</td></tr>
+                    <tr><td>34</td><td>34</td><td>42</td></tr>
+                    <tr><td>36</td><td>36</td><td>44</td></tr>
+                </table>
+                <div class="size-tip">
+                    <strong>How to measure:</strong><br/>
+                    Chest — Measure around the fullest part of your chest<br/>
+                    Waist — Measure around your natural waistline<br/>
+                    Hip — Measure around the fullest part of your hips
+                </div>
+
+            <% } else if(categoryName.equalsIgnoreCase("Women")) { %>
+                <!-- WOMEN SIZE GUIDE -->
+                <div class="size-guide-title">👗 Women's Clothing Size Guide</div>
+                <table class="size-table">
+                    <tr>
+                        <th>Size</th>
+                        <th>Bust (inches)</th>
+                        <th>Waist (inches)</th>
+                        <th>Hip (inches)</th>
+                    </tr>
+                    <tr><td>XS</td><td>32-33</td><td>24-25</td><td>34-35</td></tr>
+                    <tr><td>S</td><td>34-35</td><td>26-27</td><td>36-37</td></tr>
+                    <tr><td>M</td><td>36-37</td><td>28-29</td><td>38-39</td></tr>
+                    <tr><td>L</td><td>38-39</td><td>30-31</td><td>40-41</td></tr>
+                    <tr><td>XL</td><td>40-41</td><td>32-33</td><td>42-43</td></tr>
+                </table>
+                <div class="size-guide-title" style="margin-top:15px">👖 Women's Jeans Size Guide</div>
+                <table class="size-table">
+                    <tr>
+                        <th>Waist Size</th>
+                        <th>Waist (inches)</th>
+                        <th>Hip (inches)</th>
+                    </tr>
+                    <tr><td>26</td><td>26</td><td>36</td></tr>
+                    <tr><td>28</td><td>28</td><td>38</td></tr>
+                    <tr><td>30</td><td>30</td><td>40</td></tr>
+                    <tr><td>32</td><td>32</td><td>42</td></tr>
+                    <tr><td>34</td><td>34</td><td>44</td></tr>
+                </table>
+                <div class="size-tip">
+                    <strong>How to measure:</strong><br/>
+                    Bust — Measure around the fullest part of your bust<br/>
+                    Waist — Measure around your natural waistline<br/>
+                    Hip — Measure around the fullest part of your hips<br/><br/>
+                    <strong>Tip:</strong> For sarees, one size fits all. For blouse size refer to your bust measurement.
+                </div>
+
+            <% } else if(categoryName.equalsIgnoreCase("Kids")) { %>
+                <!-- KIDS SIZE GUIDE -->
+                <div class="size-guide-title">🧒 Kids' Clothing Size Guide</div>
+                <table class="size-table">
+                    <tr>
+                        <th>Age</th>
+                        <th>Height (cm)</th>
+                        <th>Chest (inches)</th>
+                        <th>Waist (inches)</th>
+                    </tr>
+                    <tr><td>2-3 Years</td><td>92-98</td><td>21-22</td><td>20-21</td></tr>
+                    <tr><td>4-5 Years</td><td>104-110</td><td>23-24</td><td>21-22</td></tr>
+                    <tr><td>6-7 Years</td><td>116-122</td><td>25-26</td><td>22-23</td></tr>
+                    <tr><td>8-9 Years</td><td>128-134</td><td>27-28</td><td>23-24</td></tr>
+                    <tr><td>10-11 Years</td><td>140-146</td><td>29-30</td><td>24-25</td></tr>
+                </table>
+                <div class="size-tip">
+                    <strong>Tip:</strong> Kids grow quickly! If your child is between sizes, we recommend sizing up for longer wear.
+                </div>
+
+            <% } else { %>
+                <!-- DEFAULT SIZE GUIDE FOR ACCESSORIES -->
+                <div class="size-guide-title">👜 Accessories Size Guide</div>
+                <table class="size-table">
+                    <tr>
+                        <th>Size</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr><td>S</td><td>Small — suitable for slim build</td></tr>
+                    <tr><td>M</td><td>Medium — most common size</td></tr>
+                    <tr><td>L</td><td>Large — suitable for larger build</td></tr>
+                    <tr><td>One Size</td><td>Universal fit for all</td></tr>
+                </table>
+                <div class="size-tip">
+                    <strong>Note:</strong> Most accessories like bags, sunglasses and jewellery come in One Size fits all.
+                </div>
+            <% } %>
+
+        </div>
+    </div>
 
     <nav class="navbar">
         <div class="logo">Trendora</div>
@@ -157,7 +315,9 @@
         <a href="${pageContext.request.contextPath}/products">Products</a>
         <% if(category != null) { %>
             <span>›</span>
-            <a href="${pageContext.request.contextPath}/products?categoryId=<%= category.getCategoryId() %>"><%= category.getCategoryName() %></a>
+            <a href="${pageContext.request.contextPath}/products?categoryId=<%= category.getCategoryId() %>">
+                <%= category.getCategoryName() %>
+            </a>
         <% } %>
         <span>›</span>
         <%= product.getProductName() %>
@@ -208,13 +368,18 @@
                 <%= product.getDescription() != null ? product.getDescription() : "Premium quality fashion product from Trendora." %>
             </div>
 
-            <!-- SIZE SELECTION - FIXED -->
-            <% if(sizes != null && sizes.size() > 0) { %>
-                <div class="size-section">
-                    <div class="size-header">
-                        <div class="size-title">Select Size <span style="color:#f953c6">*</span></div>
-                        <div class="size-guide"><i class="fas fa-ruler"></i> Size Guide</div>
+            <!-- SIZE SELECTION -->
+            <div class="size-section">
+                <div class="size-header">
+                    <div class="size-title">
+                        Select Size <span style="color:#f953c6">*</span>
                     </div>
+                    <button type="button" class="size-guide-btn" onclick="openSizeGuide()">
+                        <i class="fas fa-ruler"></i> Size Guide
+                    </button>
+                </div>
+
+                <% if(sizes != null && sizes.size() > 0) { %>
                     <div class="size-options" id="sizeOptions">
                         <% for(ProductSize size : sizes) { %>
                             <div class="size-btn"
@@ -224,10 +389,15 @@
                         <% } %>
                     </div>
                     <div class="size-error" id="sizeError">
-                        <i class="fas fa-exclamation-circle"></i> Please select a size before adding to cart!
+                        <i class="fas fa-exclamation-circle"></i> Please select a size!
                     </div>
-                </div>
-            <% } %>
+                <% } else { %>
+                    <div class="no-sizes-msg">
+                        <i class="fas fa-info-circle"></i> Sizes not available for this product.
+                        Please contact us for more information.
+                    </div>
+                <% } %>
+            </div>
 
             <!-- QUANTITY -->
             <div class="quantity-section">
@@ -239,9 +409,12 @@
                 </div>
             </div>
 
-            <!-- ADD TO CART FORM - FIXED -->
+            <!-- ADD TO CART -->
             <div class="action-buttons">
-                <form action="${pageContext.request.contextPath}/cart" method="post" style="flex:1; display:flex;" onsubmit="return validateForm()">
+                <form action="${pageContext.request.contextPath}/cart"
+                      method="post"
+                      style="flex:1; display:flex;"
+                      onsubmit="return validateForm()">
                     <input type="hidden" name="action" value="add"/>
                     <input type="hidden" name="productId" value="<%= product.getProductId() %>"/>
                     <input type="hidden" name="productPrice" value="<%= product.getDiscountedPrice() %>"/>
@@ -297,7 +470,9 @@
                             </div>
                             <div class="product-card-info">
                                 <h3><%= related.getProductName() %></h3>
-                                <span class="product-card-price">₹<%= String.format("%.0f", related.getDiscountedPrice()) %></span>
+                                <span class="product-card-price">
+                                    ₹<%= String.format("%.0f", related.getDiscountedPrice()) %>
+                                </span>
                             </div>
                         </div>
                     </a>
@@ -313,31 +488,37 @@
     <script>
         var selectedSize = '';
 
-        // SIZE SELECTION - FIXED
+        // SIZE GUIDE MODAL
+        function openSizeGuide() {
+            document.getElementById('sizeGuideModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSizeGuide() {
+            document.getElementById('sizeGuideModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('sizeGuideModal').addEventListener('click', function(e) {
+            if(e.target === this) {
+                closeSizeGuide();
+            }
+        });
+
+        // SIZE SELECTION
         function selectSize(element, size) {
-            // Remove selected from all size buttons
             var allSizeBtns = document.querySelectorAll('.size-btn');
             allSizeBtns.forEach(function(btn) {
                 btn.classList.remove('selected');
             });
-
-            // Add selected to clicked button
             element.classList.add('selected');
-
-            // Update selected size variable
             selectedSize = size;
-
-            // Update hidden input value
             document.getElementById('selectedSize').value = size;
-
-            // Hide error if shown
             document.getElementById('sizeError').style.display = 'none';
-
-            console.log('Size selected: ' + selectedSize);
-            console.log('Hidden input value: ' + document.getElementById('selectedSize').value);
         }
 
-        // QUANTITY CONTROLS
+        // QUANTITY
         function increaseQty() {
             var qty = document.getElementById('quantity');
             if(parseInt(qty.value) < 10) {
@@ -354,24 +535,18 @@
             }
         }
 
-        // FORM VALIDATION - FIXED
+        // FORM VALIDATION
         function validateForm() {
             var sizeInput = document.getElementById('selectedSize').value;
-
             if(sizeInput === '' || sizeInput === null) {
-                // Show error message
                 document.getElementById('sizeError').style.display = 'block';
-
-                // Scroll to size section
+                document.getElementById('sizeOptions') &&
                 document.getElementById('sizeOptions').scrollIntoView({behavior: 'smooth'});
-
-                return false; // prevent form submission
+                return false;
             }
-
-            // Update quantity before submit
-            document.getElementById('selectedQty').value = document.getElementById('quantity').value;
-
-            return true; // allow form submission
+            document.getElementById('selectedQty').value =
+                document.getElementById('quantity').value;
+            return true;
         }
     </script>
 </body>
